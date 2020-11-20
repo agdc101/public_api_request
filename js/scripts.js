@@ -15,7 +15,7 @@ $.getJSON(url)
 $('#gallery').on('click', '.card', (e) => {
     let index = e.target.closest('.card').getAttribute('data-index');
     displayEmployeeModal(index); //-- modal is displayed when a '.card' is clicked.
-})
+});
 
 //-- one by one the employees are appended to the page.
 const displayEmployees = (employees) => {
@@ -33,8 +33,8 @@ const displayEmployees = (employees) => {
                         </div>
                     </div> `;
         $('#gallery').html(html); //-- html() method used so that it replaces the current data.
-    })
-}
+    });
+};
 //-- modal is displayed for the employee that was selected by the user.
 //-- the data-index value is passed to the function so that the correct employee is displayed.
 const displayEmployeeModal = (index) => {
@@ -54,7 +54,7 @@ const displayEmployeeModal = (index) => {
                                     <p class="modal-text">${employeesData[index].location.street.number}, ${employeesData[index].location.street.name}. ${employeesData[index].location.city}, ${employeesData[index].location.state}</p>
                                     <p class="modal-text">Birthday: ${employeesData[index].dob.date.match(regex)}</p>
                                 </div>
-                            </div>`
+                            </div>`;
         //-- if statement to check what buttons the modal needs based on the index position of employee.
         if (index > 0 && index < employeesData.length - 1) {
             modalHtml +=`<div class="modal-btn-container">
@@ -89,8 +89,8 @@ const displayEmployeeModal = (index) => {
             $(e.target).closest('.modal-container').hide();
             displayEmployeeModal(parseInt(index) - 1);
         }
-    })
-}
+    });
+};
 //-- search input appended.
 $('.search-container').prepend(`<form action="#" method="get">
 <input type="search" id="search-input" class="search-input" placeholder="Search...">
@@ -104,7 +104,7 @@ $('#search-input').on('keyup', () => {
     let searchValue = $('#search-input').val();
     searchedEmployees = originalEmployees.filter(employee => {
         let name = `${employee.name.first} ${employee.name.last}`;
-            return (name.toLowerCase().includes(searchValue)) ? true : false
-        })
+            return (name.toLowerCase().includes(searchValue)) ? true : false;
+        });
     displayEmployees(searchedEmployees);
-})
+});
