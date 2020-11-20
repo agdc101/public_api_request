@@ -1,16 +1,28 @@
 
-//--- VARIABLES
+//------------------- //
 const url = 'https://randomuser.me/api/?results=12';
-let employees = {};
+let originalEmployees = {};
+let employeesData = {};
+// ------------------ //
+
 $.getJSON(url)
     .then(response => response.results)
-    .then(response => employees = response)
+    .then(response => originalEmployees = response)
     .then(response => displayEmployees(response))
     .catch(error => console.log(error));
 
+//-- listener on '.card' divs. 
+$('#gallery').on('click', '.card', (e) => {
+    let index = e.target.closest('.card').getAttribute('data-index');
+    displayEmployeeModal(index); //-- modal is displayed when a '.card' is clicked.
+})
+
+//-- one by one the employees are appended to the page.
 const displayEmployees = (employees) => {
+    let html = '';
+    employeesData = employees; //-- the employees passed to the function are saved to a global variable.
     employees.forEach((employee, index) => {
-        const html = `<div class="card" data-index='${index}'">
+            html += `<div class="card" data-index='${index}'">
                         <div class="card-img-container">
                             <img class="card-img" src="${employee.picture.medium}" alt="profile picture">
                         </div>
@@ -20,37 +32,79 @@ const displayEmployees = (employees) => {
                             <p class="card-text cap">${employee.location.city}, ${employee.location.state}</p>
                         </div>
                     </div> `;
-        $('#gallery').prepend(html);
+        $('#gallery').html(html); //-- html() method used so that it replaces the current data.
     })
 }
-$('#gallery').on('click', '.card', (e) => {
-    const index = e.target.closest('.card').getAttribute('data-index');
+//-- modal is displayed for the employee that was selected by the user.
+//-- the data-index value is passed to the function so that the correct employee is displayed.
+const displayEmployeeModal = (index) => {
     // regex used to format dob
     const regex = /\d{4}-\d{2}-\d{2}/;
     // ----------------------- //
-    console.log(employees[index]);
-    const modalHtml = `<div class="modal-container">
+            let modalHtml = `<div class="modal-container">
                             <div class="modal">
                                 <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
                                 <div class="modal-info-container">
-                                    <img class="modal-img" src="${employees[index].picture.large}" alt="profile picture">
-                                    <h3 id="name" class="modal-name cap">${employees[index].name.first} ${employees[index].name.last} </h3>
-                                    <p class="modal-text">${employees[index].email}</p>
-                                    <p class="modal-text cap">${employees[index].location.city}</p>
+                                    <img class="modal-img" src="${employeesData[index].picture.large}" alt="profile picture">
+                                    <h3 id="name" class="modal-name cap">${employeesData[index].name.first} ${employeesData[index].name.last} </h3>
+                                    <p class="modal-text">${employeesData[index].email}</p>
+                                    <p class="modal-text cap">${employeesData[index].location.city}</p>
                                     <hr>
-                                    <p class="modal-text">${employees[index].cell}</p>
-                                    <p class="modal-text">${employees[index].location.street.number}, ${employees[index].location.street.name}. ${employees[index].location.city}, ${employees[index].location.state}</p>
-                                    <p class="modal-text">Birthday: ${employees[index].dob.date.match(regex)}</p>
+                                    <p class="modal-text">${employeesData[index].cell}</p>
+                                    <p class="modal-text">${employeesData[index].location.street.number}, ${employeesData[index].location.street.name}. ${employeesData[index].location.city}, ${employeesData[index].location.state}</p>
+                                    <p class="modal-text">Birthday: ${employeesData[index].dob.date.match(regex)}</p>
                                 </div>
-                            </div>
-                            <div class="modal-btn-container">
+                            </div>`
+        //-- if statement to check what buttons the modal needs based on the index position of employee.
+        if (index > 0 && index < employeesData.length - 1) {
+            modalHtml +=`<div class="modal-btn-container">
                                 <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
                                 <button type="button" id="modal-next" class="modal-next btn">Next</button>
                             </div>
                         </div>`;
+        } else if (index == 0) {
+            modalHtml +=`<div class="modal-btn-container">
+                                <button type="button" id="modal-next" class="modal-next btn">Next</button>
+                            </div>
+                        </div>`;
+        } else if (index == employeesData.length -1) {
+            modalHtml +=`<div class="modal-btn-container">
+                                <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
+                            </div>
+                        </div>`;
+        }
+                           
     $('body').prepend(modalHtml);
 
+    //-- for the modal that is displayed. an event listener is added for its buttons.
     $('.modal-container').on('click','button', (e) => {
-        if ($(e.target).text() === 'X') $(e.target).closest('.modal-container').hide();
+        if ($(e.target).text() === 'X') { 
+            $(e.target).closest('.modal-container').hide(); 
+        }
+        else if ($(e.target).text() === 'Next') { 
+            $(e.target).closest('.modal-container').hide();
+            displayEmployeeModal(parseInt(index) + 1);
+        }
+        else if ($(e.target).text() === 'Prev') {
+            $(e.target).closest('.modal-container').hide();
+            displayEmployeeModal(parseInt(index) - 1);
+        }
     })
+}
+//-- search input appended.
+$('.search-container').prepend(`<form action="#" method="get">
+<input type="search" id="search-input" class="search-input" placeholder="Search...">
+<input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+</form>`);
+
+//-- search input functionality
+let searchedEmployees = {};
+$('#search-input').on('keyup', () => {
+    searchedEmployees = {};
+    let searchValue = $('#search-input').val();
+    searchedEmployees = originalEmployees.filter(employee => {
+        let name = `${employee.name.first} ${employee.name.last}`;
+            return (name.toLowerCase().includes(searchValue)) ? true : false
+        })
+    displayEmployees(searchedEmployees);
 })
