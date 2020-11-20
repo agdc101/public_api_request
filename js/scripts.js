@@ -95,7 +95,7 @@ const displayEmployeeModal = (index) => {
 //-- search input appended.
 $('.search-container').prepend(`<form action="#" method="get">
 <input type="search" id="search-input" class="search-input" placeholder="Search...">
-<input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+<input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit" disabled>
 </form>`);
 
 //-- search input functionality
