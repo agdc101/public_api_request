@@ -19,6 +19,7 @@ $('#gallery').on('click', '.card', (e) => {
 
 //-- one by one the employees are appended to the page.
 const displayEmployees = (employees) => {
+    $('#gallery').html(''); //-- resets the html content on the page.
     let html = '';
     employeesData = employees; //-- the employees passed to the function are saved to a global variable.
     employees.forEach((employee, index) => {
@@ -101,7 +102,7 @@ $('.search-container').prepend(`<form action="#" method="get">
 let searchedEmployees = {};
 $('#search-input').on('keyup', () => {
     searchedEmployees = {};
-    let searchValue = $('#search-input').val();
+    let searchValue = $('#search-input').val().toLowerCase();
     searchedEmployees = originalEmployees.filter(employee => {
         let name = `${employee.name.first} ${employee.name.last}`;
             return (name.toLowerCase().includes(searchValue)) ? true : false;
