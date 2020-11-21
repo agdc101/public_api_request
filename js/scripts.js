@@ -22,6 +22,8 @@ const displayEmployees = (employees) => {
     $('#gallery').html(''); //-- resets the html content on the page.
     let html = '';
     employeesData = employees; //-- the employees passed to the function are saved to a global variable.
+    if (employees.length == 0) $('#gallery').html('<span class="no_result">Sorry no results were found!</span>');
+    
     employees.forEach((employee, index) => {
             html += `<div class="card" data-index='${index}'">
                         <div class="card-img-container">
@@ -57,7 +59,10 @@ const displayEmployeeModal = (index) => {
                                 </div>
                             </div>`;
         //-- if statement to check what buttons the modal needs based on the index position of employee.
-        if (index > 0 && index < employeesData.length - 1) {
+        if (employeesData.length == 1) {
+            modalHtml += `</div>`;
+        }
+        else if (index > 0 && index < employeesData.length - 1) {
             modalHtml +=`<div class="modal-btn-container">
                                 <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
                                 <button type="button" id="modal-next" class="modal-next btn">Next</button>

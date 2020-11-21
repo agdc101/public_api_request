@@ -207,7 +207,11 @@ header h1 {
     outline: none;
   }
   
-
+.no_result {
+    font-size: 2rem;
+    color: rgb(167, 4, 4);
+    margin-top: 2rem;
+}
 /* ===================================== 
    Media Queries
 ======================================== */
